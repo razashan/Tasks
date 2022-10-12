@@ -1,0 +1,49 @@
+SELECT ha.handoffsk,ha.handoffid,ha.projectno,ba.SourceLanguageCode,ba.handoffstatename,
+ba.handoff,ta.CreatedDate,ta.completeddate,ta.wordcount,
+case when ba.classification = 'H' then '0'
+when ba.classification = 'M' then '1'
+when ba.classification = 'L' then '2'
+else '3' end as Priority
+FROM Handoff as HA 
+join Tasks as ta 
+on HA.HandoffID = ta.HandoffID
+join Base as ba 
+on ba.handoffsk = ta.TaskID
+where ba.handoffstatename != 'Canceled';
+
+
+
+Bonus task 1
+select sourcelanguagecode, COUNT(sourcelanguagecode) as source_language,
+COUNT(*)*100.0/sum(COUNT(*)) over()   as percentage_of_language
+from base 
+GROUP by sourcelanguagecode
+order by percentage_of_language desc
+limit 1 
+
+
+Bonus task 2 
+SELECT * FROM Handoff
+where iscurrent = 0
+
+
+
+Bonus task 3
+SELECT ha.handoffsk,ha.handoffid,ha.projectno,ba.SourceLanguageCode,ba.handoffstatename,
+ba.handoff,ta.CreatedDate,ta.completeddate,ta.wordcount,
+case when ba.classification = 'H' then '0'
+when ba.classification = 'M' then '1'
+when ba.classification = 'L' then '2'
+else '3' end as Priority,
+case when ba.classification ='H' then DATEADD(day, 1, ta.createddate) 
+when ba.classification = 'M' then DATEADD(day, 3, ta.createddate)
+when ba.classification = 'L' then  DATEADD(day, 5, ta.createddate)
+else  DATEADD(day, 10, ta.createddate) end as Due_Date
+FROM Handoff as HA 
+join Tasks as ta 
+on HA.HandoffID = ta.HandoffID
+join Base as ba 
+on ba.handoffsk = ta.TaskID
+where ba.handoffstatename != 'Canceled';
+
+
